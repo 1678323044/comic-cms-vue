@@ -1,0 +1,39 @@
+/* 公共样式 */
+.el-main{
+  padding: 0!important;
+  margin: 10px;
+  background: #ffffff;
+}
+
+.main-search{
+  width: 100%;
+  padding: 15px 20px;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  margin: 0 0 10px 0;
+}
+.main-search .el-input{
+  width: 180px;
+}
+.main-search .el-input__inner{
+  color: #333333;
+  background-color: #dde4ee;
+}
+
+.main-table{
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+.main-table .el-table{
+  margin: 0 0 30px 0;
+}
+.main-table .el-table th{
+  padding: 10px 0;
+  color: #333333;
+}
+.main-table .el-table td{
+  padding: 3px 0;
+}
+
