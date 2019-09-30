@@ -5,21 +5,26 @@
         设备入库
       </div>
       <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm">
-        <el-form-item label="漫画名称" prop="project">
-          <el-input v-model="ruleForm.project" placeholder="请填写漫画名称"></el-input>
-          <span>2个字节的数字</span>
+        <el-form-item label="漫画名称" prop="name">
+          <el-input v-model="ruleForm.name" placeholder="请填写漫画名称"></el-input>
         </el-form-item>
-        <el-form-item label="是否新番" prop="project">
-          <el-input v-model="ruleForm.project" placeholder="请填写漫画名称"></el-input>
-          <span>2个字节的数字</span>
+        <el-form-item label="是否新番" prop="newProgram">
+          <el-radio-group v-model="ruleForm.newProgram">
+            <el-radio label="旧番"></el-radio>
+            <el-radio label="新番"></el-radio>
+          </el-radio-group>
         </el-form-item>
-        <el-form-item label="上架状态" prop="project">
-          <el-input v-model="ruleForm.project" placeholder="请填写漫画名称"></el-input>
-          <span>2个字节的数字</span>
+        <el-form-item label="上架状态" prop="state">
+          <el-radio-group v-model="ruleForm.state">
+            <el-radio label="下架"></el-radio>
+            <el-radio label="上架"></el-radio>
+          </el-radio-group>
         </el-form-item>
-        <el-form-item label="完结状态" prop="project">
-          <el-input v-model="ruleForm.project" placeholder="请填写漫画名称"></el-input>
-          <span>2个字节的数字</span>
+        <el-form-item label="完结状态" prop="endState">
+          <el-radio-group v-model="ruleForm.endState">
+            <el-radio label="下架"></el-radio>
+            <el-radio label="上架"></el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="漫画种类" prop="type">
           <el-select v-model="value" placeholder="请选择">
@@ -31,17 +36,15 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="作者" prop="manufacturer">
-          <el-input v-model="ruleForm.manufacturer" placeholder="请填写制造商编码"></el-input>
-          <span>1个字节的数字</span>
+        <el-form-item label="作者" prop="author">
+          <el-input v-model="ruleForm.author" placeholder="请填写漫画作者"></el-input>
         </el-form-item>
-        <el-form-item label="漫画介绍" prop="year">
-          <el-input v-model="ruleForm.year" placeholder="请填写年份的最后一位"></el-input>
-          <span>1个字节的数字</span>
+        <el-form-item label="漫画介绍" prop="introduction">
+          <el-input type="textarea" v-model="ruleForm.introduction"></el-input>
         </el-form-item>
-        <el-form-item label="评分" prop="week">
-          <el-input v-model="ruleForm.week" placeholder="请填写第几周"></el-input>
-          <span>1或2个字节的不为0的数字</span>
+        <el-form-item label="评分" prop="avgScore">
+          <el-input v-model="ruleForm.avgScore" placeholder="请填写分数"></el-input>
+          <span>0~10之间的数字</span>
         </el-form-item>
         <el-form-item label="标签" prop="startnumber">
           <el-input v-model="ruleForm.startnumber" placeholder="请填写起始编号"></el-input>
@@ -56,17 +59,21 @@
           <span>0-9999,截至编号必须大于起始编号</span>
         </el-form-item>
         <el-form-item label="VIP推荐" prop="endnumber">
-          <el-input v-model="ruleForm.endnumber" placeholder="请填写截至编号"></el-input>
-          <span>0-9999,截至编号必须大于起始编号</span>
+          <el-radio-group v-model="ruleForm.vipRecommendState">
+            <el-radio label="是VIP推荐"></el-radio>
+            <el-radio label="不是VIP推荐"></el-radio>
+          </el-radio-group>
         </el-form-item>
-        <el-form-item label="畅销书" prop="endnumber">
-          <el-input v-model="ruleForm.endnumber" placeholder="请填写截至编号"></el-input>
-          <span>0-9999,截至编号必须大于起始编号</span>
+        <el-form-item label="畅销书" prop="easySEllingState">
+          <el-radio-group v-model="ruleForm.easySEllingState">
+            <el-radio label="畅销书"></el-radio>
+            <el-radio label="不是畅销书"></el-radio>
+          </el-radio-group>
         </el-form-item>
-        <el-form-item label="漫画等级" prop="type">
+        <el-form-item label="漫画等级" prop="level">
           <el-select v-model="value" placeholder="请选择">
             <el-option
-              v-for="item in options"
+              v-for="item in level"
               :key="item.value"
               :label="item.label"
               :value="item.value">
@@ -85,12 +92,12 @@
 <script>
     export default {
         data(){
-            let checkOne = (rule, value, callback) => {
+            let checkName = (rule, value, callback) => {
                 if (!value) {
                     return callback(new Error('输入框不能为空'));
                 }
-                if (!/^[0-9]+$/.test(value) || value.length !== 1) {
-                    callback(new Error('请输入1位的数字'));
+                if (value.length > 15) {
+                    callback(new Error('漫画名称过长！'));
                     return
                 }
                 callback();
@@ -127,7 +134,11 @@
             };
             return{
                 ruleForm: {
-                    type: 0,
+                    level: [
+                        {label: '1级', value: 1},
+                        {label: '2级', value: 2},
+                        {label: '3级', value: 3}
+                    ],
                     project: '',
                     manufacturer: '',
                     year: '',
@@ -136,10 +147,10 @@
                     endnumber: ''
                 },
                 rules: {
+                    name: [{ required: true, validator: checkName }],
+                    author: [{ required: true, validator: checkName }],
                     type: [{ required: true }],
                     project: [ { required: true, validator: checkProject, trigger: 'blur' } ],
-                    manufacturer: [ { required: true, validator: checkOne, trigger: 'blur' } ],
-                    year: [ { required: true, validator: checkOne, trigger: 'blur' } ],
                     week: [ { required: true, validator: checkWeek, trigger: 'blur' } ],
                     startnumber: [ { required: true, validator: checkRange, trigger: 'blur' } ],
                     endnumber: [ { required: true, validator: checkRange, trigger: 'blur' } ]
