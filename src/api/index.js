@@ -12,3 +12,6 @@ export const reqLoginInfo = (data) => ajax(`${API_URL}/manager/login.do`,data)
 export const reqComicList = (data) => ajax(`${API_URL}/manager/listbooks.do`,data)
 
 export const reqChapterList = (data) => ajax(`${API_URL}/manager/pullchapters.do`,data)
+
+/* 新增内容 */
+export const reqUploadPic = (data,config) => ajax(`${API_URL}/manager/uploadaddimage.do`,data,'POST',config)

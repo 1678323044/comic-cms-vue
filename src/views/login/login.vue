@@ -32,6 +32,7 @@
 
 <script>
   import {reqLoginInfo} from '../../api/index'
+  import cookieUtil from '../../util/cookieUtil'
   export default {
       data(){
           return{
@@ -46,11 +47,13 @@
                   alert('请输入用户名或密码')
                   return
               }
-              const val = {"Username" : this.username,"Password": this.password}
-              const result = await reqLoginInfo(val)
-              if (result === 'ERROR'){
-                  alert('用户名或密码错误')
-              }else if (result === 'OK') {
+              let val = {"Username" : this.username,"Password": this.password}
+              let result = await reqLoginInfo(val)
+              if (result.state === 'failed'){
+                  alert(result.message)
+              }
+              if (result.state === 'ok') {
+                  cookieUtil.setCookie(result.data)
                   this.$router.replace('/comicList')
               }
           }
@@ -70,7 +73,6 @@
     position: absolute;
     top: 0;
     left: 0;
-/*    background: url("") no-repeat 50%;*/
     background-size: cover;
     z-index: 0;
   }

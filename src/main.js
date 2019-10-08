@@ -17,10 +17,6 @@ import qs from 'qs'
 // 引入vuex
 import store from './store/index'
 
-//引入vue-cookie
-import VueCookies from 'vue-cookie'
-Vue.use(VueCookies)
-
 //引入filters
 import './filters/index'
 

@@ -50,13 +50,23 @@
           <el-input v-model="ruleForm.startnumber" placeholder="请填写起始编号"></el-input>
           <span>数字范围：0-9999</span>
         </el-form-item>
+
+        <!-- 改动地方 -->
         <el-form-item label="封面图片" prop="endnumber">
-          <el-input v-model="ruleForm.endnumber" placeholder="请填写截至编号"></el-input>
-          <span>0-9999,截至编号必须大于起始编号</span>
+          <el-upload
+            class="avatar-uploader"
+            action="/manager/uploadaddimage.do"
+            :show-file-list="false"
+            :auto-upload="true"
+            :http-request="uploadPic"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
         </el-form-item>
+
         <el-form-item label="详情图片" prop="endnumber">
-          <el-input v-model="ruleForm.endnumber" placeholder="请填写截至编号"></el-input>
-          <span>0-9999,截至编号必须大于起始编号</span>
+          <input type="file">
         </el-form-item>
         <el-form-item label="VIP推荐" prop="endnumber">
           <el-radio-group v-model="ruleForm.vipRecommendState">
@@ -90,6 +100,7 @@
 </template>
 
 <script>
+    import {reqUploadPic} from '../../api/index'
     export default {
         data(){
             let checkName = (rule, value, callback) => {
@@ -166,44 +177,43 @@
                     label: '国漫'
                 }],
                 value: '',
-                dialogVisible: false
+                dialogVisible: false,
+                imageUrl: ''
             }
         },
         methods: {
-            submitForm(formName){
-                //表单验证
-                this.$refs[formName].validate(async (valid) => {
-                    if (valid && this.ruleForm.endnumber > this.ruleForm.startnumber) {
-                        //处理提交
-                        const data = {type: this.value,project: this.ruleForm.project,
-                            manufacturer: parseInt(this.ruleForm.manufacturer),
-                            year: parseInt(this.ruleForm.year),week: parseInt(this.ruleForm.week),
-                            startnumber: parseInt(this.ruleForm.startnumber),
-                            endnumber: parseInt(this.ruleForm.endnumber)}
-                        console.log(data)
-                        const result = await reqCreateReceivers(data)
-                        if (result.errcode === 0){
-                            //清空输入框
-                            this.ruleForm.type = 0
-                            this.ruleForm.project = ''
-                            this.ruleForm.manufacturer = ''
-                            this.ruleForm.year = ''
-                            this.ruleForm.week = ''
-                            this.ruleForm.startnumber = ''
-                            this.ruleForm.endnumber = ''
-                            this.dialogVisible = true
-                            this.$store.dispatch('getCreateReceivers',result)
-                        }else {
-                            alert(result.msg)
-                        }
-                    }else {
-                        alert("信息填写错误")
-                        return false
-                    }
-                })
-            },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+            },
+
+            /* 新增地方 */
+            async uploadPic(files){
+                let formData = new FormData()
+                formData.append('file',files.file)
+                formData.append('actionType', 1)
+                formData.append('temp','8111391296')
+                let config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+                let result = await reqUploadPic(formData,config)
+                console.log(result)
+            },
+            handleAvatarSuccess(res, file) {
+                this.imageUrl = URL.createObjectURL(file.raw);
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
             }
         }
     }
