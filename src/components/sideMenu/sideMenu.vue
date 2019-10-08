@@ -14,7 +14,7 @@
               <span>漫画书管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="1-1">漫画书列表</el-menu-item>
+              <el-menu-item index="1-1" @click="goto('/comicList')">漫画书列表</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -24,6 +24,13 @@
 </template>
 
 <script>
+  export default {
+    methods: {
+      goto(path){
+        this.$router.replace(path)
+      }
+    }
+  }
 </script>
 
 <style>

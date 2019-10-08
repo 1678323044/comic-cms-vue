@@ -32,12 +32,14 @@
 
 <script>
   import {reqLoginInfo} from '../../api/index'
+  import cookieUtil from '../../util/cookieUtil'
   export default {
       data(){
           return{
               username: '',
               password: '',
-              checked: true
+              checked: true,
+              cookie: ''
           }
       },
       methods: {
@@ -48,13 +50,16 @@
               }
               const val = {"Username" : this.username,"Password": this.password}
               const result = await reqLoginInfo(val)
-              if (result === 'ERROR'){
-                  alert('用户名或密码错误')
-              }else if (result === 'OK') {
-                  this.$router.replace('/comicList')
+              if (result.state === 'failed'){
+                  alert(result.message)
+              }
+              if (result.state === 'ok') {
+                cookieUtil.setCookie(result.data)
+                this.$router.replace('/comicList')
               }
           }
-      }
+      },
+
   }
 </script>
 

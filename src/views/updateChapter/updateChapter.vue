@@ -2,19 +2,20 @@
   <el-main class="form-bg">
     <div class="main-form">
       <div class="form-title">
-        添加漫画
+        设备入库
       </div>
-      <comic-form></comic-form>
+      <chapter-form></chapter-form>
     </div>
   </el-main>
 </template>
 
 <script>
-  import comicForm from '../../components/comicForm/comicForm'
+  import chapterForm from '../../components/chapterForm/chapterForm'
   export default {
     components: {
-      comicForm
+      chapterForm
     }
   }
 </script>
+
 

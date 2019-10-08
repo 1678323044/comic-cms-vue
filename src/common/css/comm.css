@@ -2,6 +2,14 @@
 .el-main{
   padding: 0!important;
   margin: 10px;
+}
+
+.el-main .form-title{
+  line-height: 60px;
+  text-indent: 40px;
+}
+
+.form-bg{
   background: #ffffff;
 }
 
@@ -21,7 +29,6 @@
 }
 
 .main-table{
-  height: 100%;
   padding: 20px;
   box-sizing: border-box;
   background: #ffffff;

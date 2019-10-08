@@ -2,7 +2,7 @@
   <el-main class="form-bg">
     <div class="main-form">
       <div class="form-title">
-        添加漫画
+        设备入库
       </div>
       <comic-form></comic-form>
     </div>
@@ -17,4 +17,3 @@
     }
   }
 </script>
-

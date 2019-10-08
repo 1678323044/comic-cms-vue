@@ -6,6 +6,8 @@ import comicList from '../views/comicList/comicList'
 import login from '../views/login/login'
 import chapterList from '../views/chapterList/chapterList'
 import addComic from '../views/addComic/addComic'
+import updateComic from '../views/updateComic/updateComic'
+import updateChapter from '../views/updateChapter/updateChapter'
 
 export default new Router({
   routes: [
@@ -34,6 +36,20 @@ export default new Router({
     {
       path: '/addComic',
       component: addComic,
+      meta: {
+        showComponent: true
+      }
+    },
+    {
+      path: '/updateComic',
+      component: updateComic,
+      meta: {
+        showComponent: true
+      }
+    },
+    {
+      path: '/updateChapter',
+      component: updateChapter,
       meta: {
         showComponent: true
       }

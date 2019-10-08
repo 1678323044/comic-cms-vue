@@ -19,22 +19,21 @@
 
 <style scoped>
   .el-header{
-    width: 100%;
     height: 10%!important;
-    line-height: 70px;
     background-color: rgb(50, 65, 87);
     color: #ffffff;
     padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
   }
   .el-header h1{
     font-size: 22px;
     font-weight: normal;
-    width: 220px;
-    float: left;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .el-header .quit{
-    float: right;
-    width: 200px;
     line-height: 70px;
     margin: 0 40px 0 0;
     text-align: center;
@@ -43,13 +42,14 @@
   .el-header .quit ul{
     position: absolute;
     top: 65px;
-    left: 70px;
+    right: 0;
     background: #ffffff;
     width: 100px;
     color: #333333;
     line-height: 40px;
     font-size: 14px;
     border-radius: 4px;
+    z-index: 99999;
   }
   .el-header .quit ul li{
     border-bottom: 1px #eeeeee solid;
