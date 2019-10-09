@@ -53,7 +53,7 @@
         :auto-upload="true"
         :http-request="uploadHomePic"
         :before-upload="beforeAvatarUpload">
-        <img v-if="ruleForm.homePicUrl" width="100%" height="100%" :src="ruleForm.homePicUrl" class="avatar">
+        <img v-if="homePicUrl" width="100%" height="100%" :src="homePicUrl" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </el-form-item>
@@ -65,7 +65,7 @@
         :auto-upload="true"
         :http-request="uploadChapterPic"
         :before-upload="beforeAvatarUpload">
-        <img v-if="ruleForm.chapterPicUrl" width="100%" height="100%" :src="ruleForm.chapterPicUrl" class="avatar">
+        <img v-if="chapterPicUrl" width="100%" height="100%" :src="chapterPicUrl" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </el-form-item>
@@ -130,10 +130,10 @@
         callback()
       };
       return{
-        ruleForm: {
-            homePicUrl: '',    //主页封面图链接
-            chapterPicUrl: ''  //章节封面图链接
-        },
+        ruleForm: { },
+        homePicUrl: '',     //主页封面图链接
+        chapterPicUrl: '',  //章节封面图链接
+        title: '',          //临时ID
         levels: [   //设置漫画等级
           {label: '1级', level: 1},
           {label: '2级', level: 2},
@@ -169,9 +169,11 @@
         //表单验证
         this.$refs[formName].validate((valid) => {
           if (valid){
-              //this.$emit('childFn',this.ruleForm)
-              console.log("验证通过")
+              this.ruleForm.CoverImagePath = this.homePicUrl
+              this.ruleForm.BannerImagePath = this.chapterPicUrl
+              this.ruleForm.Id = this.title
               console.log(this.ruleForm)
+              //this.$emit('childFn',this.ruleForm)
           }else {
               alert('缺少必填内容')
               return false
@@ -182,7 +184,6 @@
         this.$refs[formName].resetFields();
       },
       async uploadPic(files,num){
-          console.log(this.bookId)
           let formData = new FormData()
           let randomNum = Math.floor((Math.random()+Math.floor(Math.random()*9+1))*Math.pow(10,10-1));
           formData.append('temp', randomNum.toString()) // 随机十位数
@@ -197,10 +198,11 @@
           let result = await reqUploadPic(formData,config)
           if (result.state === 'ok'){
               if (files.action === '/CoverImagePath'){
-                  this.ruleForm.homePicUrl = result.data
-                  console.log(this.ruleForm.homePicUrl)
+                  this.homePicUrl = result.data
+                  this.title = result.title
               }else {
-                  this.ruleForm.chapterPicUrl = result.data
+                  this.chapterPicUrl = result.data
+                  this.title = result.title
               }
           }
       },

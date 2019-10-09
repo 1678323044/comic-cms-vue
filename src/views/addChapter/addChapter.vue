@@ -2,9 +2,9 @@
   <el-main class="form-bg">
     <div class="main-form">
       <div class="form-title">
-        设备入库
+        添加章节
       </div>
-      <chapter-form :page="page" @childFn="addChapter"></chapter-form>
+      <chapter-form :page="page" :chapterId="chapterId" :chapter="chapter" @childFn="addChapter"></chapter-form>
     </div>
   </el-main>
 </template>
@@ -15,7 +15,9 @@
   export default {
       data(){
           return{
-              page: '添加章节'
+              page: '添加章节',
+              chapterId: '',
+              chapter: {}
           }
       },
       components: {

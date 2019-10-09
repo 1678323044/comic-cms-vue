@@ -3,16 +3,16 @@
     <el-form-item label="章节名称" prop="name">
       <el-input v-model="ruleForm.name" placeholder="请填写章节名称"></el-input>
     </el-form-item>
-    <el-form-item label="章节标题" required>
+    <el-form-item label="章节标题">
       <el-input v-model="ruleForm.title" placeholder="请填写章节标题"></el-input>
     </el-form-item>
-    <el-form-item label="章节序号" required>
+    <el-form-item label="章节序号">
       <el-input v-model="ruleForm.SerialNumber" placeholder="请填写章节序号"></el-input>
     </el-form-item>
     <el-form-item label="章节封面图片">
       <el-upload
         class="avatar-uploader"
-        action="/BannerImagePath"
+        action="/coverImagePath"
         :show-file-list="false"
         :auto-upload="true"
         :http-request="uploadChapterPic"
@@ -39,7 +39,7 @@
         <el-radio label="2">发布</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="阅读权限" required>
+    <el-form-item label="阅读权限">
       <el-radio-group v-model="ruleForm.ReadPermission">
         <el-radio label="0">免费</el-radio>
         <el-radio label="1">vip/金币</el-radio>
@@ -91,7 +91,10 @@
         callback()
       };
       return{
-        ruleForm: this.chapter,
+        ruleForm: {},
+        chapterPicUrl: '',  //章节封面图
+        contentPicUrl: '',  //章节内容图
+        title: '',          //临时ID
         levels: [   //设置漫画等级
           {label: '1级', level: 1},
           {label: '2级', level: 2},
@@ -114,17 +117,24 @@
           author: [{ required: true, validator: checkName }],
           introduction: [{ validator: checkText }],
           ReadingCoin: [{ required: true, validator: checkNumber }],
-        },
-        chapterPicUrl: '',
-        contentPicUrl: '',
+        }
       }
+    },
+    created(){
+      this.ruleForm = this.chapter
     },
     methods: {
       submitForm(formName){
         //表单验证
         this.$refs[formName].validate((valid) => {
           if (valid){
-              this.$emit('childFn',this.ruleForm)
+              //this.$emit('childFn',this.ruleForm)
+              this.ruleForm.coverImagePath = this.chapterPicUrl
+              this.ruleForm.ContentImagePath = this.contentPicUrl
+              this.ruleForm.Id = this.title
+              console.log(this.ruleForm)
+          }else {
+            alert('缺少必填信息')
           }
         })
       },
@@ -156,10 +166,12 @@
           }
           let result = await reqUploadPic(formData,config)
           if (result.state === 'ok'){
-              if (files.action === '/CoverImagePath'){
+              if (files.action === '/coverImagePath'){
                   this.chapterPicUrl = result.data
+                  this.title = result.title
               }else {
                   this.contentPicUrl = result.data
+                  this.title = result.title
               }
           }
       },
@@ -209,5 +221,13 @@
   .el-form{
     width: 65%;
     margin: 45px auto 0;
+  }
+  .avatar-uploader >>> .el-upload{
+    font-size: 28px;
+    width: 140px;
+    height: 140px;
+    line-height: 140px;
+    border: 1px dashed #d9d9d9;
+    color: #999999;
   }
 </style>
