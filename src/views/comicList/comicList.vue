@@ -1,24 +1,24 @@
 <template>
   <el-main>
-    <div class="main-search">
-      <el-input placeholder="漫画名称"></el-input>
-      <el-select v-model="value" placeholder="上架状态">
+    <el-form class="main-search" :model="ruleForm">
+      <el-input placeholder="漫画名称" v-model="ruleForm.name"></el-input>
+      <el-select v-model="ruleForm.state">
         <el-option
-          v-for="item in state"
+          v-for="item in states"
           :key="item.value"
           :label="item.label"
           :value="item.value">
         </el-option>
       </el-select>
-      <el-select v-model="value" placeholder="完结状态">
+      <el-select v-model="ruleForm.endState" placeholder="完结状态">
         <el-option
-          v-for="item in endState"
+          v-for="item in endStates"
           :key="item.value"
           :label="item.label"
           :value="item.value">
         </el-option>
       </el-select>
-      <el-select v-model="value" placeholder="排序方式">
+      <el-select v-model="ruleForm.sort" placeholder="排序方式">
         <el-option
           v-for="item in sorts"
           :key="item.value"
@@ -27,14 +27,21 @@
         </el-option>
       </el-select>
       <el-button type="primary" @click="handleQuery">查询</el-button>
-      <el-button type="primary" @click="handleAdd">添加</el-button>
-    </div>
+      <el-button type="primary" @click="handleAddJump">添加</el-button>
+    </el-form>
     <div class="main-table">
       <template>
         <el-table
           :data="comicList"
           border
           style="width: 100%">
+          <el-table-column
+            width="80"
+            label="序号">
+            <template slot-scope="scope">
+              {{scope.$index + 1}}
+            </template>
+          </el-table-column>
           <el-table-column
             width="110"
             label="漫画封面">
@@ -81,14 +88,14 @@
             <template slot-scope="scope">
               <el-button
                 size="mini"
-                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                @click="handleEdit(scope.row.id)">编辑</el-button>
               <el-button
                 size="mini"
                 @click="handleLook(scope.row.id)">查看</el-button>
               <el-button
                 size="mini"
                 type="danger"
-                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                @click="handleDelete(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -102,50 +109,77 @@
       </el-pagination>
     </div>
   </el-main>
+
 </template>
 
 <script>
     import {mapState} from 'vuex'
+    import {reqDelComic} from '../../api/index'
     export default {
         data() {
             return {
                 currentPage: 1,  //当前页码
                 pageSize: 10,    //每页数据条数
-                sortType: 0,     //排序方式 1 倒序 0 升序
-                state: [
-                    {label: '全部', value: ''},
-                    {label: '存稿', value: ''},
-                    {label: '发布', value: ''}
+                ruleForm: {
+                  sort: 0,         //排序方式 1 倒序 0 升序
+                  name: '',        //漫画名称
+                  state: '',       //漫画上架状态
+                  endState: '',    //漫画连载状态
+                },
+                states: [        //设置漫画上架状态
+                    {label: '上架状态', value: ''},
+                    {label: '存稿', value: 1},
+                    {label: '发布', value: 2}
                 ],
-                endState: [
-                    {label: '全部', value: ''},
-                    {label: '连载', value: ''},
-                    {label: '完结', value: ''}
-                ],
+                endStates: [     //设置漫画连载状态
+                    {label: '连载状态', value: ''},
+                    {label: '连载', value: 0},
+                    {label: '完结', value: 1}
+                ],               //设置漫画排序方式
                 sorts: [
-                    {label: '正序', value: ''},
-                    {label: '倒序', value: ''}
+                    {label: '正序', value: 0},
+                    {label: '倒序', value: 1}
                 ]
             }
         },
         created(){
-          let param = {"sorttype": this.sortType,"page": this.currentPage,"pagesize": this.pageSize}
-          this.$store.dispatch('getComicList',param)
+          let param = {"sorttype": this.ruleForm.sort,"page": this.currentPage,"pagesize": this.pageSize}
+          this.getComicList(param)
         },
         methods: {
-            handleEdit(index, row) {
-                console.log(index, row);
+            //发送获取漫画数据请求
+            getComicList(param){
+              this.$store.dispatch('getComicList',param)
             },
-            handleDelete(index, row) {
-                console.log(index, row);
+            handleEdit(comicId) {
+                this.$router.replace(`/updateComic?Bookid=${comicId}`)
             },
+            async handleDelete(comicId) {
+              let result = await reqDelComic({"Bookid": comicId})
+              if (result.state === 'ok'){
+                  alert('删除成功')
+              }else {
+                  alert('删除失败')
+              }
+            },
+            //处理查询功能
             handleQuery(){
-
+              let param = {"name": this.ruleForm.name,"state": this.ruleForm.state,
+                "endState": this.ruleForm.endState,"sorttype": this.ruleForm.sort,
+                "page": this.currentPage,"pagesize": this.pageSize}
+              this.getComicList(param)
             },
             handleLook(id){
               this.$router.replace(`/chapterList?Bookid=${id}`)
             },
-            handleAdd(){
+            //处理分页功能
+            handlePaging(num){
+              let param = {"name": this.ruleForm.name,"state": this.ruleForm.state,
+                "endState": this.ruleForm.endState,"sorttype": this.ruleForm.sort,
+                "page": num,"pagesize": this.pageSize}
+              this.getComicList(param)
+            },
+            handleAddJump(){
               this.$router.replace('/addComic')
             }
         },

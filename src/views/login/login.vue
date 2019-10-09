@@ -38,7 +38,8 @@
           return{
               username: '',
               password: '',
-              checked: true
+              checked: true,
+              cookie: ''
           }
       },
       methods: {
@@ -53,11 +54,12 @@
                   alert(result.message)
               }
               if (result.state === 'ok') {
-                  cookieUtil.setCookie(result.data)
-                  this.$router.replace('/comicList')
+                cookieUtil.setCookie(result.data)
+                this.$router.replace('/comicList')
               }
           }
-      }
+      },
+
   }
 </script>
 

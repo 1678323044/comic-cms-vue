@@ -1,13 +1,16 @@
 /* 间接更新state属性 */
 import {
   reqComicList,
-  reqChapterList
+  reqChapterList,
+  reqChapter,
+  reqComic
 } from '../api/index'
 import {
   RECEIVE_COMICLIST,
-  RECEIVE_CHAPTERLIST
+  RECEIVE_CHAPTERLIST,
+  RECEIVE_CHAPTER,
+  RECEIVE_COMIC
 } from './mutations-types'
-import chapterList from "../views/chapterList/chapterList";
 
 export default {
   //异步获取漫画列表
@@ -26,6 +29,22 @@ export default {
       let chapterList = result.data
       let chapterCount = result.count
       commit(RECEIVE_CHAPTERLIST,{chapterList,chapterCount})
+    }
+  },
+  //异步获取漫画信息
+  async getComic({commit},param){
+      let result = await reqComic(param)
+      if(result.state === 'ok'){
+        let comic = result.data
+        commit(RECEIVE_COMIC,{comic})
+      }
+  },
+  //异步获取章节信息
+  async getChapter({commit},param){
+    let result = await reqChapter(param)
+    if (result.state === 'ok'){
+      let chapter = result.data
+      commit(RECEIVE_CHAPTER,{chapter})
     }
   }
 }

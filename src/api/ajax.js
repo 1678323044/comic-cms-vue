@@ -21,7 +21,7 @@ export default function ajax (url,data={},type='GET',config){
       if (config === ''){
         promise = axios.post(url,qs.stringify(data))
       }else {
-        promise = axios.post(url,data,{headers: { 'Content-Type': 'application/x-www-form-urlencoded' }})
+        promise = axios.post(url, data,config)
       }
     }
     promise.then(function(response){
