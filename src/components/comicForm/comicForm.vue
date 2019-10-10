@@ -3,31 +3,31 @@
     <el-form-item label="漫画名称" prop="name">
       <el-input v-model="ruleForm.name" placeholder="请填写漫画名称"></el-input>
     </el-form-item>
-    <el-form-item label="是否新番">
+    <el-form-item label="是否新番" prop="newProgram">
       <el-radio-group v-model="ruleForm.newProgram">
         <el-radio label="0">旧番</el-radio>
         <el-radio label="1">新番</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="上架状态">
+    <el-form-item label="上架状态" prop="state">
       <el-radio-group v-model="ruleForm.state">
         <el-radio label="0">下架</el-radio>
         <el-radio label="1">上架</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="完结状态">
+    <el-form-item label="完结状态" prop="endState">
       <el-radio-group v-model="ruleForm.endState">
         <el-radio label="0">连载</el-radio>
         <el-radio label="1">完结</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="漫画种类" prop="sorts">
-      <el-select v-model="ruleForm.sort" placeholder="请选择">
+    <el-form-item label="漫画种类" prop="categoryId">
+      <el-select v-model="ruleForm.categoryId" placeholder="请选择漫画种类">
         <el-option
-          v-for="item in sorts"
-          :key="item.sort"
+          v-for="item in categoryIds"
+          :key="item.categoryId"
           :label="item.label"
-          :value="item.sort">
+          :value="item.categoryId">
         </el-option>
       </el-select>
     </el-form-item>
@@ -69,19 +69,19 @@
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </el-form-item>
-    <el-form-item label="VIP推荐">
+    <el-form-item label="VIP推荐" prop="vipRecommendState">
       <el-radio-group v-model="ruleForm.vipRecommendState">
         <el-radio label="0">不是VIP推荐</el-radio>
         <el-radio label="1">是VIP推荐</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="畅销书">
+    <el-form-item label="畅销书" prop="easySEllingState">
       <el-radio-group v-model="ruleForm.easySEllingState">
         <el-radio label="0">不是畅销书</el-radio>
         <el-radio label="1">畅销书</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="漫画等级">
+    <el-form-item label="漫画等级" prop="level">
       <el-select v-model="ruleForm.level" placeholder="请选择">
         <el-option
           v-for="item in levels"
@@ -130,7 +130,7 @@
         callback()
       };
       return{
-        ruleForm: { },
+        ruleForm: {},
         homePicUrl: '',     //主页封面图链接
         chapterPicUrl: '',  //章节封面图链接
         title: '',          //临时ID
@@ -139,25 +139,30 @@
           {label: '2级', level: 2},
           {label: '3级', level: 3}
         ],
-        sorts: [  //漫画分类
+          categoryIds: [  //漫画分类
           {
             label: '韩漫',
-            sort: 1
+            categoryId: 1
           }, {
             label: '日漫',
-            sort: 2
+            categoryId: 2
           }, {
             label: '国漫',
-            sort: 3
+            categoryId: 3
           }
         ],
         rules: {   //表单验证
-          name: [{ required: true, validator: checkName, }],
-          radio: [{ required: true, message: '请选择活动资源', trigger: 'change' }],
-          sorts: [{ message: '请选择漫画类型',trigger: 'change' }],
-          author: [{ required: true, validator: checkName }],
-          introduction: [{ validator: checkText }],
+          name: [{ required: true, validator: checkName, trigger: 'blur' }],
+          newProgram: [{ required: true, message: '请选择是否为新番', trigger: 'change' }],
+          state: [{ required: true, message: '请选择漫画上架状态', trigger: 'change' }],
+          endState: [{ required: true, message: '请选择漫画完结状态', trigger: 'change' }],
+          categoryId: [{ required: true,message: '请选择漫画类型', trigger: 'change' }],
+          author: [{ required: true, validator: checkName, trigger: 'blur' }],
+          introduction: [{ validator: checkText, trigger: 'blur' }],
           avgScore: [{ required: true, validator: checkNumber }],
+          vipRecommendState: [{ required: true, message: '请选择是否为VIP推荐', trigger: 'change' }],
+          easySEllingState: [{ required: true, message: '请选择是否为畅销书', trigger: 'change' }],
+          level: [{ required: true, message: '请选择漫画登录等级', trigger: 'change' }]
         },
       }
     },
@@ -172,8 +177,7 @@
               this.ruleForm.CoverImagePath = this.homePicUrl
               this.ruleForm.BannerImagePath = this.chapterPicUrl
               this.ruleForm.Id = this.title
-              console.log(this.ruleForm)
-              //this.$emit('childFn',this.ruleForm)
+              this.$emit('childFn',this.ruleForm)
           }else {
               alert('缺少必填内容')
               return false

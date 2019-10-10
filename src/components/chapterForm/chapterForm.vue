@@ -1,13 +1,14 @@
 <template>
   <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm">
+    <el-form-item label="章节标题" prop="title">
+      <el-input v-model="ruleForm.title" placeholder="请填写章节标题"></el-input>
+    </el-form-item>
     <el-form-item label="章节名称" prop="name">
       <el-input v-model="ruleForm.name" placeholder="请填写章节名称"></el-input>
     </el-form-item>
-    <el-form-item label="章节标题">
-      <el-input v-model="ruleForm.title" placeholder="请填写章节标题"></el-input>
-    </el-form-item>
-    <el-form-item label="章节序号">
-      <el-input v-model="ruleForm.SerialNumber" placeholder="请填写章节序号"></el-input>
+    <el-form-item label="章节序号" prop="SerialNumber" v-if="isShow">
+      <el-input-number v-model="ruleForm.SerialNumber" :min="0" :max="100"></el-input-number>
+      <span>0~100之间的数字</span>
     </el-form-item>
     <el-form-item label="章节封面图片">
       <el-upload
@@ -33,24 +34,24 @@
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </el-form-item>
-    <el-form-item label="发布状态" prop="author">
+    <el-form-item label="发布状态" prop="State">
       <el-radio-group v-model="ruleForm.State">
         <el-radio label="1">库存</el-radio>
         <el-radio label="2">发布</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="阅读权限">
+    <el-form-item label="阅读权限" prop="ReadPermission">
       <el-radio-group v-model="ruleForm.ReadPermission">
         <el-radio label="0">免费</el-radio>
         <el-radio label="1">vip/金币</el-radio>
       </el-radio-group>
     </el-form-item>
     <el-form-item label="购买所需阅读币" prop="ReadingCoin">
-      <el-input v-model="ruleForm.ReadingCoin" placeholder="请填写分数"></el-input>
-      <span>0~10之间的数字</span>
+      <el-input-number v-model="ruleForm.ReadingCoin" :min="0" :max="120"></el-input-number>
+      <span>0~120之间的数字</span>
     </el-form-item>
     <el-form-item label="备注">
-      <el-input v-model="ruleForm.Sign" placeholder="请填写起始编号"></el-input>
+      <el-input type="textarea" v-model="ruleForm.Sign" placeholder="请填写备注信息"></el-input>
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="submitForm('ruleForm')">立即添加</el-button>
@@ -62,7 +63,7 @@
 <script>
   import {reqUploadPic} from '../../api/index'
   export default {
-    props: ['chapterId','page','chapter'],
+    props: ['chapterId','page','chapter','isShow'],
     data(){
       // 验证输入内容是否超过指定长度
       let checkName = (rule, value, callback) => {
@@ -74,21 +75,6 @@
           return
         }
         callback();
-      };
-      let checkText = (rule, value, callback) => {
-        if (value.length > 150){
-          callback(new Error('文字不能超过50字'));
-          return
-        }
-        callback()
-      };
-      // 验证输入内容是否是范围0~10的数字
-      let checkNumber = (rule, value, callback) => {
-        if (!/^[0-9]+$/.test(value) || value > 10 || value < 0){
-          callback(new Error('请输入1到10的数字'));
-          return
-        }
-        callback()
       };
       return{
         ruleForm: {},
@@ -113,11 +99,14 @@
           }
         ],
         rules: {   //表单验证
-          name: [{ required: true, validator: checkName, }],
-          author: [{ required: true, validator: checkName }],
-          introduction: [{ validator: checkText }],
-          ReadingCoin: [{ required: true, validator: checkNumber }],
-        }
+          name: [{ required: true, validator: checkName, trigger: 'blur' }],
+          title: [{ required: true, message: '请填写漫画章节', trigger: 'blur' }],
+          SerialNumber: [{ required: true, message: '请填写章节序号', trigger: 'blur' }],
+          State: [{ required: true, message: '请选择章节发布状态', trigger: 'change' }],
+          ReadPermission: [{ required: true, message: '请选择阅读权限', trigger: 'change' }],
+          ReadingCoin: [{ required: true, message: '请填写阅读币数量', trigger: 'blur' }],
+        },
+        comicId: '',  //漫画ID
       }
     },
     created(){
@@ -128,11 +117,10 @@
         //表单验证
         this.$refs[formName].validate((valid) => {
           if (valid){
-              //this.$emit('childFn',this.ruleForm)
               this.ruleForm.coverImagePath = this.chapterPicUrl
               this.ruleForm.ContentImagePath = this.contentPicUrl
               this.ruleForm.Id = this.title
-              console.log(this.ruleForm)
+              this.$emit('childFn',this.ruleForm)
           }else {
             alert('缺少必填信息')
           }
@@ -155,6 +143,8 @@
       async uploadPic(files,num){
           let formData = new FormData()
           let randomNum = Math.floor((Math.random()+Math.floor(Math.random()*9+1))*Math.pow(10,10-1));
+          this.comicId = this.$route.query.bookid
+          formData.append('bookid', this.comicId)
           formData.append('temp', randomNum.toString()) // 随机十位数
           formData.append('chapterid', this.chapterId) // 漫画Id
           formData.append('file',files.file)    // 图片数据
@@ -165,6 +155,7 @@
               }
           }
           let result = await reqUploadPic(formData,config)
+          console.log(result)
           if (result.state === 'ok'){
               if (files.action === '/coverImagePath'){
                   this.chapterPicUrl = result.data

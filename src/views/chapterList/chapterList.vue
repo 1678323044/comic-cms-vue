@@ -1,5 +1,9 @@
 <template>
   <el-main>
+    <crumbs>
+      <el-breadcrumb-item slot="one" :to="{ path: '/comicList' }">漫画列表</el-breadcrumb-item>
+      <el-breadcrumb-item slot="two">章节列表</el-breadcrumb-item>
+    </crumbs>
     <el-form class="main-search" :model="ruleForm">
         <el-input placeholder="章节名称" v-model="ruleForm.name"></el-input>
         <el-select v-model="ruleForm.state" placeholder="上架状态">
@@ -107,6 +111,7 @@
 </template>
 
 <script>
+    import crumbs from "../../components/crumbs/crumbs";
     import {mapState} from 'vuex'
     import {reqDelChapter} from '../../api/index'
     export default {
@@ -133,8 +138,12 @@
                 sorts: [
                     {label: '正序', sort: 0},
                     {label: '倒序', sort: 1}
-                ]
+                ],
+                comicId: '',   //漫画ID
             }
+        },
+        components: {
+            crumbs
         },
         created(){
             this.bookId = this.$route.query.Bookid
@@ -146,13 +155,16 @@
               this.$store.dispatch('getChapterList',param)
             },
             handleEdit(comicId,chapterId) {
-                this.$router.replace(`/updateChapter?Bookid=${comicId}&Id=${chapterId}`)
+                this.$router.replace(`/updateChapter?bookid=${comicId}&Id=${chapterId}`)
             },
             // 处理删除
             async handleDelete(chapterId) {
-              let result = await reqDelChapter(chapterId)
+              let result = await reqDelChapter({"Chapterid": chapterId})
               if (result.state === 'ok'){
-                alert("删除成功")
+                  alert("删除成功")
+                  this.$router.go(0)
+              }else {
+                  alert("删除失败")
               }
             },
             handleQuery(){
@@ -169,7 +181,8 @@
               this.getChapterList(param)
             },
             handleAddJump(){
-                this.$router.replace('/addChapter')
+                this.comicId = this.$route.query.Bookid
+                this.$router.replace(`/addChapter?bookid=${this.comicId}`)
             }
         },
         computed: {

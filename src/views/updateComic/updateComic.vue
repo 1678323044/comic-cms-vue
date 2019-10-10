@@ -1,5 +1,9 @@
 <template>
   <el-main class="form-bg">
+    <crumbs>
+      <el-breadcrumb-item slot="one" :to="{ path: '/comicList' }">漫画列表</el-breadcrumb-item>
+      <el-breadcrumb-item slot="two">编辑漫画</el-breadcrumb-item>
+    </crumbs>
     <div class="main-form">
       <div class="form-title">
         设备入库
@@ -11,6 +15,7 @@
 
 <script>
   import comicForm from '../../components/comicForm/comicForm'
+  import crumbs from "../../components/crumbs/crumbs";
   import {reqUpdateComic} from '../../api/index'
   import {mapState} from 'vuex'
   export default {
@@ -20,7 +25,8 @@
       }
     },
     components: {
-      comicForm
+      comicForm,
+      crumbs
     },
     created() {
         this.bookId = this.$route.query.Bookid

@@ -28,10 +28,10 @@ export const reqUploadPic = (data,config) => ajax(`${API_URL}/manager/uploadaddi
 export const reqUpdateComic = (data) => ajax(`${API_URL}/manager/updatebook.do`,data,'POST')
 
 //添加漫画信息
-export const reqAddComic = (data) => ajax(`${API_URL}/manager/addbook.do`,data,'POST')
+export const reqAddComic = (data) => ajax(`${API_URL}/manager/addbook.do`,data)
 
 //添加漫画章节
-export const reqAddChapter = (data) => ajax(`${API_URL}/manager/addchapter .do`,data,'POST')
+export const reqAddChapter = (data) => ajax(`${API_URL}/manager/addchapter.do`,data,'GET')
 
 //更新漫画章节
 export const reqUpdateChapter = (data) => ajax(`${API_URL}/manager/addchapter .do`,data,'POST')

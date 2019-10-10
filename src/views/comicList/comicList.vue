@@ -1,5 +1,8 @@
 <template>
   <el-main>
+    <crumbs>
+      <el-breadcrumb-item slot="one">漫画列表</el-breadcrumb-item>
+    </crumbs>
     <el-form class="main-search" :model="ruleForm">
       <el-input placeholder="漫画名称" v-model="ruleForm.name"></el-input>
       <el-select v-model="ruleForm.state">
@@ -115,6 +118,7 @@
 <script>
     import {mapState} from 'vuex'
     import {reqDelComic} from '../../api/index'
+    import crumbs from '../../components/crumbs/crumbs'
     export default {
         data() {
             return {
@@ -142,6 +146,9 @@
                 ]
             }
         },
+        components: {
+            crumbs
+        },
         created(){
           let param = {"sorttype": this.ruleForm.sort,"page": this.currentPage,"pagesize": this.pageSize}
           this.getComicList(param)
@@ -158,6 +165,7 @@
               let result = await reqDelComic({"Bookid": comicId})
               if (result.state === 'ok'){
                   alert('删除成功')
+                  this.$router.go(0)
               }else {
                   alert('删除失败')
               }
